@@ -1,0 +1,14 @@
+syntax = "proto3";
+package Text;
+
+service Text {
+    rpc Txt (TextRequest) returns (TextResponse);
+}
+
+message TextRequest {
+  string txt = 1;   
+}
+
+message TextResponse {
+    string confirmation = 1;
+}
