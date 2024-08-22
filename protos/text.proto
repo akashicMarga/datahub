@@ -6,9 +6,9 @@ service Text {
 }
 
 message TextRequest {
-  string txt = 1;   
+  string txt = 1;
 }
 
 message TextResponse {
-    string confirmation = 1;
+  string embedding = 1;
 }

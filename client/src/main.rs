@@ -15,7 +15,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         stdin().read_line(&mut query).unwrap();
         let request = tonic::Request::new(TextRequest { txt: query });
         let response = client.txt(request).await?;
-        println!("Got: '{}' from service", response.into_inner().confirmation);
+        println!("Got: '{}' from service", response.into_inner().embedding);
     }
     Ok(())
 }
