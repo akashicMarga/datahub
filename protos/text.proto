@@ -1,8 +1,10 @@
 syntax = "proto3";
-package Text;
+
+package text;
 
 service Text {
-    rpc Txt (TextRequest) returns (TextResponse);
+  rpc Txt(TextRequest) returns (TextResponse);
+  rpc HealthCheck(HealthCheckRequest) returns (stream HealthCheckResponse);
 }
 
 message TextRequest {
@@ -11,4 +13,18 @@ message TextRequest {
 
 message TextResponse {
   string embedding = 1;
+}
+
+message HealthCheckRequest {
+  int32 duration_seconds = 1;
+  int32 interval_seconds = 2;
+}
+
+message HealthCheckResponse {
+  string status = 1;
+  string uptime = 2;
+  string memory_usage = 3;
+  string cpu_usage = 4;
+  string gpu_status = 5;
+  string version = 6;
 }

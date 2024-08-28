@@ -1,0 +1,10 @@
+[2024-08-29][00:31:59][server][INFO] Starting server...
+[2024-08-29][00:31:59][server][INFO] Loading TextService...
+[2024-08-29][00:31:59][server][INFO] EmbeddingModel loaded successfully
+[2024-08-29][00:31:59][server][INFO] Server listening on [::1]:8080
+[2024-08-29][00:32:07][server][INFO] Health check requested for 30 seconds with 5 second intervals
+[2024-08-29][00:32:07][server][DEBUG] Health check: Uptime: 7s, Memory: 10707MB, CPU: 41.95076%, GPU: GPU Not Available
+[2024-08-29][00:32:12][server][DEBUG] Health check: Uptime: 12s, Memory: 10803MB, CPU: 42.073803%, GPU: GPU Not Available
+[2024-08-29][00:32:17][server][DEBUG] Health check: Uptime: 17s, Memory: 10765MB, CPU: 21.443583%, GPU: GPU Not Available
+[2024-08-29][00:32:22][server][DEBUG] Health check: Uptime: 22s, Memory: 10766MB, CPU: 23.059229%, GPU: GPU Not Available
+[2024-08-29][00:32:27][server][DEBUG] Health check: Uptime: 27s, Memory: 10747MB, CPU: 23.91008%, GPU: GPU Not Available
