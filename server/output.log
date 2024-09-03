@@ -8,3 +8,16 @@
 [2024-08-29][00:32:17][server][DEBUG] Health check: Uptime: 17s, Memory: 10765MB, CPU: 21.443583%, GPU: GPU Not Available
 [2024-08-29][00:32:22][server][DEBUG] Health check: Uptime: 22s, Memory: 10766MB, CPU: 23.059229%, GPU: GPU Not Available
 [2024-08-29][00:32:27][server][DEBUG] Health check: Uptime: 27s, Memory: 10747MB, CPU: 23.91008%, GPU: GPU Not Available
+{"level":"INFO","message":"Starting server...","target":"server","timestamp":"2024-08-30T15:48:56"}
+{"level":"INFO","message":"Loading TextService...","target":"server","timestamp":"2024-08-30T15:48:56"}
+{"level":"INFO","message":"EmbeddingModel loaded successfully","target":"server","timestamp":"2024-08-30T15:48:56"}
+{"level":"INFO","message":"Server listening on [::1]:8080","target":"server","timestamp":"2024-08-30T15:48:56"}
+{"level":"INFO","message":"Health check requested for 30 seconds with 5 second intervals","target":"server","timestamp":"2024-08-30T15:49:05"}
+{"level":"DEBUG","message":"Health check: Uptime: 8s, Memory: 11032MB, CPU: 38.472984%, GPU: GPU Not Available","target":"server","timestamp":"2024-08-30T15:49:05"}
+{"level":"DEBUG","message":"Health check: Uptime: 13s, Memory: 11050MB, CPU: 21.333426%, GPU: GPU Not Available","target":"server","timestamp":"2024-08-30T15:49:10"}
+{"level":"DEBUG","message":"Health check: Uptime: 18s, Memory: 11050MB, CPU: 19.279327%, GPU: GPU Not Available","target":"server","timestamp":"2024-08-30T15:49:15"}
+{"level":"DEBUG","message":"Health check: Uptime: 23s, Memory: 11040MB, CPU: 19.18301%, GPU: GPU Not Available","target":"server","timestamp":"2024-08-30T15:49:20"}
+{"level":"DEBUG","message":"Health check: Uptime: 28s, Memory: 11049MB, CPU: 19.781988%, GPU: GPU Not Available","target":"server","timestamp":"2024-08-30T15:49:25"}
+{"level":"DEBUG","message":"Health check: Uptime: 33s, Memory: 11041MB, CPU: 19.248365%, GPU: GPU Not Available","target":"server","timestamp":"2024-08-30T15:49:30"}
+{"level":"DEBUG","message":"Health check: Uptime: 38s, Memory: 11023MB, CPU: 18.887218%, GPU: GPU Not Available","target":"server","timestamp":"2024-08-30T15:49:35"}
+{"level":"DEBUG","message":"Health check: Uptime: 43s, Memory: 10875MB, CPU: 24.299469%, GPU: GPU Not Available","target":"server","timestamp":"2024-08-30T15:49:40"}

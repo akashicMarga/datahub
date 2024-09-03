@@ -4,6 +4,7 @@ mod utils;
 use candle::Device;
 use embeddings::EmbeddingModel;
 use futures::Stream;
+use serde_json::json;
 use std::pin::Pin;
 use std::time::Instant;
 use sysinfo::{CpuExt, ProcessExt, System, SystemExt};
@@ -24,16 +25,21 @@ fn setup_logger() -> Result<(), fern::InitError> {
     fern::Dispatch::new()
         .format(|out, message, record| {
             out.finish(format_args!(
-                "{}[{}][{}] {}",
-                chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S]"),
-                record.target(),
-                record.level(),
-                message
+                "{}",
+                json!({
+                    "timestamp": chrono::Local::now().format("%Y-%m-%dT%H:%M:%S").to_string(),
+                    "level": record.level().to_string(),
+                    "target": record.target().to_string(),
+                    "message": message.to_string(),
+                })
+                .to_string()
             ))
         })
         .level(log::LevelFilter::Debug)
         .chain(std::io::stdout())
-        .chain(fern::log_file("output.log")?)
+        .chain(fern::log_file(
+            "/Users/akashsingh/Documents/Den/datahub/logs/output.log",
+        )?)
         .apply()?;
     Ok(())
 }
