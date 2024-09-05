@@ -30,8 +30,19 @@ services:
     networks:
       - loki
 
+  qdrant:
+    image: qdrant/qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - loki
+
 networks:
   loki:
 
 volumes:
   loki-data:
+  qdrant_data:

@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 prost = "0.13.1"
-tokio = { version = "1.39.3", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.39.3", features = ["macros", "rt-multi-thread", "full"] }
 tonic = "0.12.1"
 
 [build-dependencies]

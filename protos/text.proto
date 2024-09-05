@@ -5,6 +5,7 @@ package text;
 service Text {
   rpc Txt(TextRequest) returns (TextResponse);
   rpc HealthCheck(HealthCheckRequest) returns (stream HealthCheckResponse);
+  rpc SearchSimilar(SearchRequest) returns (SearchResponse);
 }
 
 message TextRequest {
@@ -13,6 +14,20 @@ message TextRequest {
 
 message TextResponse {
   string embedding = 1;
+}
+
+message SearchRequest {
+  string query = 1;
+  int32 limit = 2;
+}
+
+message SearchResponse {
+  repeated SearchResult results = 1;
+}
+
+message SearchResult {
+  string text = 1;
+  float score = 2;
 }
 
 message HealthCheckRequest {

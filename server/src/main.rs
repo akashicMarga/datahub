@@ -1,5 +1,8 @@
+mod db;
 mod embeddings;
 mod utils;
+
+use db::QdrantService;
 
 use candle::Device;
 use embeddings::EmbeddingModel;
@@ -7,15 +10,17 @@ use futures::Stream;
 use serde_json::json;
 use std::pin::Pin;
 use std::time::Instant;
-use sysinfo::{CpuExt, ProcessExt, System, SystemExt};
+use sysinfo::{CpuExt, System, SystemExt};
 use text::{
     text_server::{Text, TextServer},
-    HealthCheckRequest, HealthCheckResponse, TextRequest, TextResponse,
+    HealthCheckRequest, HealthCheckResponse, SearchRequest, SearchResponse, SearchResult,
+    TextRequest, TextResponse,
 };
 
 use log::{debug, error, info};
 use tokio::time::{interval, Duration};
 use tonic::{transport::Server, Request, Response, Status};
+use uuid::Uuid;
 
 pub mod text {
     tonic::include_proto!("text");
@@ -50,7 +55,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("Starting server...");
     let address = "[::1]:8080".parse().unwrap();
-    let text_service = TextService::load_service();
+    let text_service = TextService::load_service().await?;
 
     info!("Server listening on {}", address);
     Server::builder()
@@ -63,6 +68,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 pub struct TextService {
     emb_model: embeddings::EmbeddingModel,
     start_time: Instant,
+    qdrant: QdrantService,
 }
 
 #[tonic::async_trait]
@@ -120,6 +126,37 @@ impl Text for TextService {
         Ok(Response::new(Box::pin(stream) as Self::HealthCheckStream))
     }
 
+    async fn search_similar(
+        &self,
+        request: Request<SearchRequest>,
+    ) -> Result<Response<SearchResponse>, Status> {
+        let r = request.into_inner();
+        let query_embedding = self
+            .emb_model
+            .get_embeddings(&r.query)
+            .map_err(|e| Status::internal(e.to_string()))?
+            .reshape((384,))
+            .map_err(|e| Status::internal(e.to_string()))?
+            .to_vec1()
+            .map_err(|e| Status::internal(e.to_string()))?;
+
+        let similar_texts = self
+            .qdrant
+            .search_similar(query_embedding, r.limit as u64)
+            .await
+            .map_err(|e| Status::internal(e.to_string()))?;
+
+        let results = similar_texts
+            .into_iter()
+            .map(|point| SearchResult {
+                text: point.payload["text"].to_string(),
+                score: point.score,
+            })
+            .collect();
+
+        Ok(Response::new(SearchResponse { results }))
+    }
+
     async fn txt(&self, request: Request<TextRequest>) -> Result<Response<TextResponse>, Status> {
         let r = request.into_inner();
         info!("Received text request: {}", r.txt);
@@ -130,6 +167,13 @@ impl Text for TextService {
                 return Err(Status::internal("Failed to get embeddings"));
             }
         };
+
+        // Store the embedding in Qdrant
+        self.qdrant
+            .store_embedding(Uuid::new_v4().to_string(), embeddings.clone(), r.txt)
+            .await
+            .map_err(|e| Status::internal(e.to_string()))?;
+
         let embeddings = embeddings
             .iter()
             .map(|num| num.to_string())
@@ -145,13 +189,14 @@ impl Text for TextService {
 }
 
 impl TextService {
-    pub fn load_service() -> Self {
-        info!("Loading TextService...");
+    pub async fn load_service() -> Result<Self, Box<dyn std::error::Error>> {
         let model = EmbeddingModel::load_model();
-        info!("EmbeddingModel loaded successfully");
-        Self {
+        let qdrant = QdrantService::new().await?;
+        qdrant.init_collection().await?;
+        Ok(Self {
             emb_model: model,
+            qdrant,
             start_time: Instant::now(),
-        }
+        })
     }
 }

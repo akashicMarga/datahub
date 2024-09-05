@@ -1,6 +1,8 @@
 use std::io::stdin;
 
-use text::{text_client::TextClient, HealthCheckRequest, HealthCheckResponse, TextRequest};
+use text::{
+    text_client::TextClient, HealthCheckRequest, HealthCheckResponse, SearchRequest, TextRequest,
+};
 
 pub mod text {
     tonic::include_proto!("text");
@@ -21,15 +23,39 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // }
 
     //check health api
-    let request = tonic::Request::new(HealthCheckRequest {
-        duration_seconds: 30, // Run for 30 seconds
-        interval_seconds: 5,  // Send updates every 5 seconds
+    // let request = tonic::Request::new(HealthCheckRequest {
+    //     duration_seconds: 30, // Run for 30 seconds
+    //     interval_seconds: 5,  // Send updates every 5 seconds
+    // });
+
+    // let mut stream = client.health_check(request).await?.into_inner();
+
+    // while let Some(response) = stream.message().await? {
+    //     println!("Health check update: {:?}", response);
+    // }
+
+    //search similar
+    // Prepare the search request
+    let request = tonic::Request::new(SearchRequest {
+        query: "thanks".to_string(),
+        limit: 5, // Number of results you want
     });
 
-    let mut stream = client.health_check(request).await?.into_inner();
+    // Send the request and get the response
+    let response = client.search_similar(request).await?;
 
-    while let Some(response) = stream.message().await? {
-        println!("Health check update: {:?}", response);
+    // Process the response
+    let search_results = response.into_inner().results;
+
+    println!("Search Results:");
+    for (index, result) in search_results.iter().enumerate() {
+        println!(
+            "{}. Text: {}, Score: {}",
+            index + 1,
+            result.text,
+            result.score
+        );
     }
+
     Ok(())
 }
