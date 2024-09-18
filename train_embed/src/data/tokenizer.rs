@@ -1,3 +1,11 @@
+// This module defines a trait `Tokenizer` that represents a common interface for all tokenizer
+// types used in the text classification library. A specific implementation of this trait,
+// `BertCasedTokenizer`, uses the BERT cased tokenization strategy provided by the `tokenizers` library.
+
+// This trait represents the common interface for all tokenizer types.
+// The `Send + Sync` bounds are necessary for allowing these operations
+// to work across thread boundaries.
+#[allow(dead_code)]
 pub trait Tokenizer: Send + Sync {
     /// Converts a text string into a sequence of tokens.
     fn encode(&self, value: &str) -> Vec<usize>;
@@ -18,29 +26,25 @@ pub trait Tokenizer: Send + Sync {
     }
 }
 
-/// Struct represents a specific tokenizer using the Roberta BPE tokenization strategy.
-pub struct BertTokenizer {
+/// Struct represents a specific tokenizer using the BERT cased tokenization strategy.
+pub struct BertCasedTokenizer {
     // The underlying tokenizer from the `tokenizers` library.
     tokenizer: tokenizers::Tokenizer,
-    pad_token: usize,
 }
 
-// Default implementation for creating a new BertTokenizer.
-// Downloads tokenizer from given model_name (eg: "roberta-base").
-// Pad_token_id is the id of the padding token used to convert sequences to a consistent length.
-// specified in the model's config.json.
-impl BertTokenizer {
-    pub fn new(model_name: String, pad_token_id: usize) -> Self {
+// Default implementation for creating a new BertCasedTokenizer.
+// This uses a pretrained BERT cased tokenizer model.
+impl Default for BertCasedTokenizer {
+    fn default() -> Self {
         Self {
-            tokenizer: tokenizers::Tokenizer::from_pretrained(model_name, None).unwrap(),
-            pad_token: pad_token_id,
+            tokenizer: tokenizers::Tokenizer::from_pretrained("bert-base-cased", None).unwrap(),
         }
     }
 }
 
-// Implementation of the Tokenizer trait for BertTokenizer.
-impl Tokenizer for BertTokenizer {
-    /// Convert a text string into a sequence of tokens using the BERT model's tokenization strategy.
+// Implementation of the Tokenizer trait for BertCasedTokenizer.
+impl Tokenizer for BertCasedTokenizer {
+    // Convert a text string into a sequence of tokens using the BERT cased tokenization strategy.
     fn encode(&self, value: &str) -> Vec<usize> {
         let tokens = self.tokenizer.encode(value, true).unwrap();
         tokens.get_ids().iter().map(|t| *t as usize).collect()
@@ -52,13 +56,13 @@ impl Tokenizer for BertTokenizer {
         self.tokenizer.decode(&tokens, false).unwrap()
     }
 
-    /// Gets the size of the BERT tokenizer's vocabulary.
+    /// Gets the size of the BERT cased tokenizer's vocabulary.
     fn vocab_size(&self) -> usize {
         self.tokenizer.get_vocab_size(true)
     }
 
     /// Gets the token used for padding sequences to a consistent length.
     fn pad_token(&self) -> usize {
-        self.pad_token
+        self.tokenizer.token_to_id("[PAD]").unwrap() as usize
     }
 }
